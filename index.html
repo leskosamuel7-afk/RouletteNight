@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#12070d" />
+  <title>Roulette Night 18+</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#12070d;
+      --bg2:#1e0b16;
+      --card:rgba(255,255,255,.07);
+      --line:rgba(255,255,255,.12);
+      --text:#fff6fb;
+      --muted:#d0b6c4;
+      --pink:#ff3d81;
+      --rose:#ff5c9f;
+      --violet:#b04dff;
+      --danger:#ff5a67;
+      --ok:#ffb3cf;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(circle at top,var(--bg2),var(--bg));color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100%}
+    body{display:flex;justify-content:center}
+    .app{width:100%;max-width:520px;min-height:100vh;padding:18px 16px 28px}
+    .badge{display:inline-block;padding:8px 12px;border:1px solid rgba(255,92,159,.35);border-radius:999px;color:#ffd1e4;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,61,129,.08)}
+    h1{font-size:34px;margin:14px 0 8px;line-height:1}
+    .sub{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 18px}
+    .card{background:var(--card);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.32)}
+    .hero{padding:20px}
+    .mode-row,.stat-row,.actions,.nav{display:flex;gap:10px;flex-wrap:wrap}
+    .mode-btn,.nav button,.ghost,.primary{
+      appearance:none;border:none;border-radius:18px;padding:12px 14px;font-weight:700;cursor:pointer;
+      transition:.18s transform,.18s opacity,.18s background;
+    }
+    .mode-btn,.nav button,.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
+    .mode-btn.active,.nav button.active{background:linear-gradient(135deg,rgba(255,61,129,.28),rgba(176,77,255,.25));border-color:rgba(255,92,159,.35)}
+    .primary{
+      width:100%;padding:18px 18px;margin-top:16px;font-size:20px;color:white;
+      background:linear-gradient(135deg,var(--pink),var(--rose),var(--violet));
+      box-shadow:0 14px 34px rgba(255,61,129,.3);
+    }
+    .primary:active,.mode-btn:active,.nav button:active,.ghost:active{transform:scale(.985)}
+    .result{
+      min-height:210px;display:flex;align-items:center;justify-content:center;text-align:center;
+      padding:24px;border-radius:26px;border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      font-size:25px;line-height:1.4;margin:18px 0 0;
+    }
+    .section{padding:18px;margin-top:16px}
+    .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .stat{padding:14px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+    .stat .label{font-size:12px;color:var(--muted)}
+    .stat .val{font-size:24px;font-weight:800;margin-top:6px}
+    .list{display:grid;gap:10px;margin-top:10px}
+    .item{padding:14px 15px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#ffeaf2}
+    .muted{color:var(--muted)}
+    .actions{margin-top:14px}
+    .ghost{flex:1}
+    .install{margin-top:12px}
+    .nav{position:sticky;bottom:8px;background:rgba(15,7,12,.88);padding:10px;border-radius:24px;border:1px solid var(--line);backdrop-filter:blur(18px);margin-top:18px;justify-content:space-between}
+    .nav button{flex:1}
+    .footer-note{font-size:12px;color:var(--muted);margin-top:12px;text-align:center}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hero">
+      <span class="badge">18+ párová hra</span>
+      <h1>Roulette Night</h1>
+      <p class="sub">Sexy dark vibe inspirovaný tvým screenshotem. Hotová PWA pro GitHub Pages, ale bez explicitního sexuálního obsahu.</p>
+
+      <div class="card section">
+        <div class="mode-row">
+          <button class="mode-btn active" data-mode="all">Vše</button>
+          <button class="mode-btn" data-mode="flirt">Flirt</button>
+          <button class="mode-btn" data-mode="touch">Dotek</button>
+          <button class="mode-btn" data-mode="game">Hra</button>
+        </div>
+
+        <div id="result" class="result">Stiskni spoušť a roztoč večer.</div>
+        <button id="spinBtn" class="primary">Stisknout spoušť</button>
+        <div class="install">
+          <button id="installBtn" class="ghost hidden">Přidat na plochu</button>
+        </div>
+      </div>
+
+      <div id="view-stats" class="card section">
+        <div class="stats">
+          <div class="stat"><div class="label">Točení</div><div id="spins" class="val">0</div></div>
+          <div class="stat"><div class="label">Zásahy</div><div id="hits" class="val">0</div></div>
+          <div class="stat"><div class="label">Režim</div><div id="modeLabel" class="val" style="font-size:18px">Vše</div></div>
+        </div>
+        <div class="actions">
+          <button id="resetBtn" class="ghost">Reset</button>
+        </div>
+      </div>
+
+      <div id="view-history" class="card section hidden">
+        <strong>Historie kol</strong>
+        <div id="historyList" class="list"></div>
+        <p id="historyEmpty" class="muted">Zatím žádná historie.</p>
+      </div>
+
+      <div id="view-about" class="card section hidden">
+        <strong>O aplikaci</strong>
+        <p class="sub" style="margin-top:10px">Stačí nahrát soubory do GitHub repozitáře a zapnout GitHub Pages. Aplikace funguje i jako PWA a jde připnout na plochu mobilu.</p>
+        <div class="item">Název: <strong>Roulette Night 18+</strong></div>
+        <div class="item">Styl: <strong>dark / sexy / neon</strong></div>
+        <div class="item">Určení: <strong>muž + žena / párová hra</strong></div>
+      </div>
+
+      <div class="nav">
+        <button class="active" data-view="stats">Hra</button>
+        <button data-view="history">Historie</button>
+        <button data-view="about">Info</button>
+      </div>
+
+      <p class="footer-note">Bez explicitních sexuálních instrukcí. Upraveno jako dospělá flirt hra.</p>
+    </div>
+  </div>
+
+  <script>
+    const challenges = {
+      flirt: [
+        "Dej partnerovi dlouhý polibek.",
+        "Řekni jednu věc, která tě na druhém nejvíc přitahuje.",
+        "Zašeptaj partnerovi něco odvážného do ucha.",
+        "Dívej se partnerovi do očí 15 sekund.",
+        "Dej partnerovi kompliment, který si zapamatuje.",
+        "Polož jednu odvážnější otázku pro páry."
+      ],
+      touch: [
+        "30 sekund jemné masáže ramen.",
+        "Objímejte se 20 sekund bez telefonu.",
+        "Dej partnerovi pusu na místo, které ukáže.",
+        "Pomalý tanec na jednu písničku.",
+        "Sedněte si blíž a 20 sekund se jen vnímejte.",
+        "Dotkni se partnerovy ruky a veď ho po místnosti."
+      ],
+      game: [
+        "Zahraj mini scénku: první rande znovu.",
+        "Vyber, kdo dnes plánuje další společný večer.",
+        "Řekni, co bys chtěl příště za společný zážitek.",
+        "Vymysli vlastní pravidlo pro další kolo.",
+        "Každý řekne jednu věc, kterou chce letos zažít.",
+        "Jeden mluví, druhý 30 sekund nesmí přerušit."
+      ]
+    };
+
+    const punishments = [
+      "Napij se.",
+      "Přidej jedno extra kolo.",
+      "Řekni pravdu na odvážnou otázku.",
+      "Nech druhého vybrat další výzvu.",
+      "Další kolo točí partner."
+    ];
+
+    let currentMode = localStorage.getItem("rn_mode") || "all";
+    let stats = JSON.parse(localStorage.getItem("rn_stats") || '{"spins":0,"hits":0}');
+    let history = JSON.parse(localStorage.getItem("rn_history") || "[]");
+    let deferredPrompt = null;
+
+    const resultEl = document.getElementById("result");
+    const spinsEl = document.getElementById("spins");
+    const hitsEl = document.getElementById("hits");
+    const modeLabelEl = document.getElementById("modeLabel");
+    const historyList = document.getElementById("historyList");
+    const historyEmpty = document.getElementById("historyEmpty");
+    const installBtn = document.getElementById("installBtn");
+
+    function modeName(mode){
+      return mode === "all" ? "Vše" : mode === "flirt" ? "Flirt" : mode === "touch" ? "Dotek" : "Hra";
+    }
+
+    function pool(){
+      return currentMode === "all"
+        ? [...challenges.flirt, ...challenges.touch, ...challenges.game]
+        : challenges[currentMode];
+    }
+
+    function save(){
+      localStorage.setItem("rn_mode", currentMode);
+      localStorage.setItem("rn_stats", JSON.stringify(stats));
+      localStorage.setItem("rn_history", JSON.stringify(history));
+    }
+
+    function renderStats(){
+      spinsEl.textContent = stats.spins;
+      hitsEl.textContent = stats.hits;
+      modeLabelEl.textContent = modeName(currentMode);
+      document.querySelectorAll(".mode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === currentMode);
+      });
+    }
+
+    function renderHistory(){
+      historyList.innerHTML = "";
+      if(!history.length){
+        historyEmpty.classList.remove("hidden");
+        return;
+      }
+      historyEmpty.classList.add("hidden");
+      history.forEach(text => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = text;
+        historyList.appendChild(div);
+      });
+    }
+
+    function spin(){
+      const fired = Math.random() < 0.22;
+      stats.spins += 1;
+
+      let text = "";
+      if(fired){
+        stats.hits += 1;
+        text = "💥 Padlo to! " + punishments[Math.floor(Math.random() * punishments.length)];
+      } else {
+        const p = pool();
+        text = "🔥 Výzva: " + p[Math.floor(Math.random() * p.length)];
+      }
+
+      resultEl.textContent = text;
+      history.unshift(text);
+      history = history.slice(0, 20);
+      save();
+      renderStats();
+      renderHistory();
+    }
+
+    function resetAll(){
+      stats = {spins:0, hits:0};
+      history = [];
+      resultEl.textContent = "Stiskni spoušť a roztoč večer.";
+      save();
+      renderStats();
+      renderHistory();
+    }
+
+    function switchView(view){
+      document.querySelectorAll(".nav button").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+      document.getElementById("view-stats").classList.toggle("hidden", view !== "stats");
+      document.getElementById("view-history").classList.toggle("hidden", view !== "history");
+      document.getElementById("view-about").classList.toggle("hidden", view !== "about");
+    }
+
+    document.getElementById("spinBtn").addEventListener("click", spin);
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentMode = btn.dataset.mode;
+        save();
+        renderStats();
+      });
+    });
+
+    document.querySelectorAll(".nav button").forEach(btn => {
+      btn.addEventListener("click", () => switchView(btn.dataset.view));
+    });
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove("hidden");
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if(!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.classList.add("hidden");
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js"));
+    }
+
+    renderStats();
+    renderHistory();
+  </script>
+</body>
+</html>

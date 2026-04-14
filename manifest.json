@@ -1,0 +1,10 @@
+{
+  "name": "Roulette Night 18+",
+  "short_name": "Roulette Night",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#12070d",
+  "theme_color": "#12070d",
+  "description": "Sexy dark párová ruleta ve formě PWA.",
+  "icons": []
+}
